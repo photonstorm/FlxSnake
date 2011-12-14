@@ -15,7 +15,7 @@ package
 	public class FlxSnake extends FlxState
 	{
 		[Embed(source = "org/flixel/data/beep.mp3")] protected var SndBeep:Class;
-		[Embed(source = "org/flixel/data/flixel.mp3")] protected var SndMusic:Class;
+		//[Embed(source = "org/flixel/data/flixel.mp3")] protected var SndMusic:Class;
 		
 		private var score:FlxText;
 		private var fruit:FlxSprite;
@@ -49,11 +49,11 @@ package
 			
 			//	Get the head piece from the body For easy later reference, and also visually change the colour a little
 			snakeHead = snakeBody.members[0];
-			snakeHead.createGraphic(8, 8, 0xFF00FF00);
-			snakeHead.facing = FlxSprite.LEFT;
+			snakeHead.makeGraphic(8, 8, 0xFF00FF00);
+			snakeHead.facing = FlxObject.LEFT;
 			
 			//	Something to eat
-			fruit = new FlxSprite(0, 0).createGraphic(8, 8, 0xFFFF0000);
+			fruit = new FlxSprite(0, 0).makeGraphic(8, 8, 0xFFFF0000);
 			placeFruit();
 			
 			//	Simple score
@@ -90,25 +90,25 @@ package
 				
 				//	2) Did we hit ourself? :)
 				//	We set the deadSnake callback to stop the QuadTree killing both objects, as we want them on-screen with the game over message
-				FlxU.overlap(snakeHead, snakeBody, deadSnake);
+				FlxG.overlap(snakeHead, snakeBody, deadSnake);
 				
 				score.text = "Score: " + FlxG.score.toString();
 				
 				if (FlxG.keys.UP)
 				{
-					snakeHead.facing = FlxSprite.UP;
+					snakeHead.facing = FlxObject.UP;
 				}
 				else if (FlxG.keys.DOWN)
 				{
-					snakeHead.facing = FlxSprite.DOWN;
+					snakeHead.facing = FlxObject.DOWN;
 				}
 				else if (FlxG.keys.LEFT)
 				{
-					snakeHead.facing = FlxSprite.LEFT;
+					snakeHead.facing = FlxObject.LEFT;
 				}
 				else if (FlxG.keys.RIGHT)
 				{
-					snakeHead.facing = FlxSprite.RIGHT;
+					snakeHead.facing = FlxObject.RIGHT;
 				}
 				
 				if (getTimer() > nextMove)
@@ -126,7 +126,7 @@ package
 		private function deadSnake(object1:FlxObject, object2:FlxObject):void
 		{
 			isAlive = false;
-			FlxG.play(SndMusic);
+			//FlxG.play(SndMusic);
 		}
 		
 		private function placeFruit(object1:FlxObject = null, object2:FlxObject = null):void
@@ -137,7 +137,7 @@ package
 			fruit.y = int(Math.random() * (FlxG.height / 8) - 1) * 8;
 			
 			//	Check that the coordinates we picked aren't already covering the snake, if they are then run this function again
-			FlxU.overlap(fruit, snakeBody, placeFruit);
+			FlxG.overlap(fruit, snakeBody, placeFruit);
 		}
 		
 		private function moveSnakeParts():void
@@ -150,13 +150,13 @@ package
 			
 			if (addSegment)
 			{
-				var addX:int = snakeBody.members[snakeBody.members.length - 1].x;
-				var addY:int = snakeBody.members[snakeBody.members.length - 1].y;
+				var addX:int = snakeBody.members[snakeBody.length - 1].x;
+				var addY:int = snakeBody.members[snakeBody.length - 1].y;
 			}
 			
 			switch (snakeHead.facing)
 			{
-				case FlxSprite.LEFT:
+				case FlxObject.LEFT:
 					if (snakeHead.x == 0)
 					{
 						snakeHead.x = FlxG.width - 8;
@@ -167,7 +167,7 @@ package
 					}
 					break;
 					
-				case FlxSprite.RIGHT:
+				case FlxObject.RIGHT:
 					if (snakeHead.x == FlxG.width - 8)
 					{
 						snakeHead.x = 0;
@@ -178,7 +178,7 @@ package
 					}
 					break;
 					
-				case FlxSprite.UP:
+				case FlxObject.UP:
 					if (snakeHead.y == 0)
 					{
 						snakeHead.y = FlxG.height - 8;
@@ -189,7 +189,7 @@ package
 					}
 					break;
 					
-				case FlxSprite.DOWN:
+				case FlxObject.DOWN:
 					if (snakeHead.y == FlxG.height - 8)
 					{
 						snakeHead.y = 0;
@@ -204,7 +204,7 @@ package
 			//	And now interate the movement down to the rest of the body parts
 			//	The easiest way to do this is simply to work our way backwards through the body pieces!
 			
-			for (var s:int = snakeBody.members.length - 1; s > 0; s--)
+			for (var s:int = snakeBody.length - 1; s > 0; s--)
 			{
 				//	We need to keep the x/y/facing values from the snake part, to pass onto the next one in the chain
 				if (s == 1)
@@ -230,7 +230,7 @@ package
 		
 		private function spawnNewBody(_x:int, _y:int):void
 		{
-			snakeBody.add(new FlxSprite(_x, _y).createGraphic(8, 8, 0xFF008000));
+			snakeBody.add(new FlxSprite(_x, _y).makeGraphic(8, 8, 0xFF008000));
 		}
 		
 	}
